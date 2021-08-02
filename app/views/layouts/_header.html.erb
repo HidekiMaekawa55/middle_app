@@ -1,0 +1,23 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbarEexample1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <%= link_to 'タスク管理アプリ', root_path, class: "navbar-brand" %>
+
+    </div>
+    
+    <div class="collapse navbar-collapse" id="navbarEexample1">
+      <ul class="nav navbar-nav navbar-right">
+        <li><%= link_to 'マイタスク', '#' %></li>
+        <li><%= link_to 'タスク一覧', '#' %></li>
+        <li><%= link_to 'ユーザ設定', '#' %></li>
+        <li><%= link_to 'サインイン', '#' %></li>
+      </ul>
+    </div>
+  </div>
+</nav>
