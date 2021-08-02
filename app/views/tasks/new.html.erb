@@ -1,2 +1,25 @@
 <h1>Tasks#new</h1>
-<p>Find me in app/views/tasks/new.html.erb</p>
+<form>
+	<div class="form-group">
+		<label for="InputEmail">メール・アドレス</label>
+		<input type="email" class="form-control" id="InputEmail" placeholder="メール・アドレスを入力して下さい。">
+	</div>
+	<div class="form-group">
+		<label for="InputPassword">パスワード</label>
+		<input type="password" class="form-control" id="InputPassword" placeholder="パスワードを入力して下さい。">
+	</div>
+	<div class="form-group">
+		<label for="InputTextarea">要件</label>
+		<textarea class="form-control" id="InputTextarea" placeholder="要件を入力して下さい。"></textarea>
+	</div>
+  <div class="radio">
+		<label class="radio-inline">
+			<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1"> ラジオボタン１
+		</label>
+
+		<label class="radio-inline">
+			<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2"> ラジオボタン２
+		</label>
+  </div>
+	<button type="submit" class="btn btn-default">送信</button>
+</form>
