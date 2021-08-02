@@ -8,7 +8,6 @@
         <span class="icon-bar"></span>
       </button>
       <%= link_to 'タスク管理アプリ', root_path, class: "navbar-brand" %>
-
     </div>
     
     <div class="collapse navbar-collapse" id="navbarEexample1">
@@ -16,7 +15,12 @@
         <li><%= link_to 'マイタスク', '#' %></li>
         <li><%= link_to 'タスク一覧', '#' %></li>
         <li><%= link_to 'ユーザ設定', '#' %></li>
-        <li><%= link_to 'サインイン', '#' %></li>
+        <% if user_signed_in? %>
+          <li><%= link_to 'ログアウト', destroy_user_session_path, method: :delete %></li>
+          <p class="navbar-text">ようこそ ゲスト さん。</p>
+        <% else %>
+          <li><%= link_to 'ログイン', new_user_session_path %></li>
+        <% end %>
       </ul>
     </div>
   </div>
