@@ -4,3 +4,8 @@
 body {
   margin-top: 50px;
 }
+
+form select {
+  display: inline-block !important;
+  width: auto !important;
+}
