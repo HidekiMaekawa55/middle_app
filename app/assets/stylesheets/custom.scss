@@ -41,3 +41,17 @@ form select {
     color: $state-danger-text;
   }
 }
+
+.card {
+  border: 1px solid black;
+}
+
+.card-header {
+  margin: 0;
+  background: #dff0d8;
+  padding: 8px;
+}
+
+.card-body {
+  padding: 10px;
+}

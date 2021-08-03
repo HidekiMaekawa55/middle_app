@@ -1,7 +1,18 @@
 <h1>タスク一覧</h1>
 
 <% @tasks.each do |task| %>
-  <p><%= task.title %></p>
-  <p><%= task.deadline.to_s(:datetime_jp) %></p>
-  <p><%= task.user.name %></p>
+  <div class ="col-sm-6">
+    <div class="card">
+      <h5 class="card-header">タスク<%= task.id %></h5>
+      <div class="card-body">
+        <h5 class="card-title"><%= task.title %></h5>
+        <p class="card-text">期限：<%= task.deadline.to_s(:datetime_jp) %></p>
+        <p class="card-text">担当者：<%= task.user.name %></p>
+        <p class="card-text">ステータス：<%= task.status %></p>
+        <%= link_to "詳細", task, class: "btn btn-primary" %>
+        <%= link_to "詳細", task, class: "btn btn-primary" %>
+        <%= link_to "詳細", task, class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
 <% end %>
