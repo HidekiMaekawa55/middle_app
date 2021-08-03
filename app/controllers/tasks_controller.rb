@@ -44,7 +44,7 @@ class TasksController < ApplicationController
     def apple
       unless user_signed_in?
         redirect_to new_user_registration_path
-        flash[:danger] = "この機能にはアカウント登録が必要です。"
+        flash[:alert] = "この機能にはアカウント登録が必要です。"
       end
     end
 end
