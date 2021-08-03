@@ -12,13 +12,14 @@
     
     <div class="collapse navbar-collapse" id="navbarEexample1">
       <ul class="nav navbar-nav navbar-right">
-        <li><%= link_to 'マイタスク', myself_tasks_path %></li>
         <li><%= link_to 'タスク一覧', tasks_path %></li>
-        <li><%= link_to 'ユーザ設定', edit_user_registration_path %></li>
         <% if user_signed_in? %>
+          <li><%= link_to 'マイタスク', myself_tasks_path %></li>
+          <li><%= link_to 'ユーザ設定', edit_user_registration_path %></li>
           <li><%= link_to 'ログアウト', destroy_user_session_path, method: :delete %></li>
           <p class="navbar-text"><%= "ようこそ #{current_user.name} さん。" %></p>
         <% else %>
+          <li><%= link_to 'サインアップ', new_user_registration_path %></li>
           <li><%= link_to 'ログイン', new_user_session_path %></li>
         <% end %>
       </ul>

@@ -1,2 +1,8 @@
-<h1>myself</h1>
+<h1>マイタスク</h1>
 <%= link_to 'New Task', new_task_path %>
+
+<% @tasks.each do |task| %>
+  <p><%= task.title %></p>
+  <p><%= task.deadline.to_s(:datetime_jp) %></p>
+  <p><%= task.user.name %></p>
+<% end %>
