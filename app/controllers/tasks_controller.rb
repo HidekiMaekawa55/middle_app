@@ -1,5 +1,6 @@
 class TasksController < ApplicationController
-  before_action :apple, only: [:new, :create, :edit, :update, :destroy]
+  before_action :set_task, only: [:show, :edit, :update, :destroy]
+  before_action :sign_now, only: [:new, :create, :edit, :update, :destroy, :myself]
 
   def index
     @tasks = Task.index_all
@@ -26,9 +27,17 @@ class TasksController < ApplicationController
   end
 
   def update
+    if @task.update(task_params)
+      redirect_to tasks_path
+    else
+      render 'edit'
+    end
   end
 
   def destroy
+    @task.destroy
+    redirect_to tasks_path
+    flash[:notice] = "タスク#{@task.id}を削除しました"
   end
 
   def myself 
@@ -37,11 +46,15 @@ class TasksController < ApplicationController
   end
 
   private
+    def set_task
+      @task = Task.find(params[:id])
+    end
+
     def task_params
       params.require(:task).permit(:title, :content, :status, :deadline)
     end
 
-    def apple
+    def sign_now
       unless user_signed_in?
         redirect_to new_user_registration_path
         flash[:alert] = "この機能にはアカウント登録が必要です。"

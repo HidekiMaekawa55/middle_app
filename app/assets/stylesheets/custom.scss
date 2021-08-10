@@ -5,11 +5,8 @@ body {
   margin-top: 50px;
 }
 
-form select {
-  display: inline-block !important;
-  width: auto !important;
-}
 
+/* flash */
 .alert,.notice {
   padding: 15px;
   border-radius: 4px;
@@ -26,6 +23,8 @@ form select {
   background-color: #dff0d8;
 }
 
+
+/* error */
 #error_explanation {
   color: red;
   ul {
@@ -42,8 +41,28 @@ form select {
   }
 }
 
+
+/* form */
+form select {
+  display: inline-block !important;
+  width: auto !important;
+}
+
+
+/* タスク一覧 */
+.col-sm-6 {
+  padding-left: 0;
+}
+
+@media (max-width: 767px) {
+  .col-sm-6 {
+    padding-right: 0;
+  }
+}
+
 .card {
   border: 1px solid black;
+  margin-bottom: 10px;
 }
 
 .card-header {
