@@ -1,6 +1,7 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: [:show, :edit, :update, :destroy, :edit_assignment, :update_assignment]
-  before_action :sign_now, only: [:new, :create, :edit, :update, :destroy, :myself]
+  before_action :set_task,     only: [:show, :edit, :update, :destroy, :edit_assignment, :update_assignment]
+  before_action :sign_now,     only: [:new, :create, :edit, :update, :destroy, :myself]
+  before_action :correct_user, only: [:edit, :update, :destroy, :edit_assignment, :update_assignment]
 
   def index
     @tasks = Task.index_all
@@ -42,11 +43,11 @@ class TasksController < ApplicationController
 
   def myself 
     @user = current_user
-    @tasks = Task.index_myself(@user)
+    @tasks = Task.index_myself(@user).page(params[:page])
   end
 
   def edit_assignment
-    @users = User.all
+    @users = User.user_all
   end
 
   def update_assignment
@@ -67,6 +68,13 @@ class TasksController < ApplicationController
       unless user_signed_in?
         redirect_to new_user_registration_path
         flash[:alert] = "この機能にはアカウント登録が必要です。"
+      end
+    end
+
+    def correct_user
+      unless @task.user == current_user
+        redirect_to tasks_path
+        flash[:alert] = "自分のタスクしか編集できません。"
       end
     end
 end

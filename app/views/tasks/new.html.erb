@@ -1,6 +1,7 @@
 <h1>新規タスク</h1>
 
 <%= form_with(model: @task, local: true) do |f| %>
+  <%= render 'shared/error_messages', object: f.object %>
   <div class="form-group">  
     <%= f.label :title %>
     <%= f.text_field :title, class: "form-control", placeholder: "titleを入力してください。" %>
