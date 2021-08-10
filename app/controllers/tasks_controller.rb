@@ -1,5 +1,5 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: [:show, :edit, :update, :destroy]
+  before_action :set_task, only: [:show, :edit, :update, :destroy, :edit_assignment, :update_assignment]
   before_action :sign_now, only: [:new, :create, :edit, :update, :destroy, :myself]
 
   def index
@@ -43,6 +43,15 @@ class TasksController < ApplicationController
   def myself 
     @user = current_user
     @tasks = Task.index_myself(@user)
+  end
+
+  def edit_assignment
+    @users = User.all
+  end
+
+  def update_assignment
+    @task.update(user_id: params[:user_id])
+    redirect_to tasks_path
   end
 
   private
