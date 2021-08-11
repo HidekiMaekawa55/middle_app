@@ -1,12 +1,23 @@
 <h1>アサイン</h1>
-<p>現在アサインされているユーザ</p>
-<p><%= @task.user.name %></p>
 
 <%= form_with(url: update_assignment_task_url, method: :patch, local: true) do |f| %>
-  <div class="form-group">  
-    <%= f.label :user_id , "新しくアサインするユーザ"%>
-    <%= f.collection_select(:user_id, @users, :id, :name, {}, {class: "form-control"})%>
+  <div class="assignment-container">
+    <div class="current-assignment">
+      <p>現在アサインされているユーザ</p>
+      <p><%= @task.user.name %></p>
+    </div>
+    <div class="new-assignment">
+      <p>新しくアサインするユーザ</p>
+      <%= f.collection_select(:user_id, @users, :id, :name, {}, {class: "form-control"})%>
+    </div>
   </div>
-  <%= f.submit "更新する", class: "btn btn-primary" %>
+  <%= f.submit "アサインする", class: "btn btn-success" %>
 <% end %>
+
+<div class="task-detail">
+  <h1>タスク<%= @task.id %></h1>
+  <p><%= @task.title %></p>
+  <p>期限：<%= @task.deadline.to_s(:datetime_jp) %></p>
+  <p>ステータス：<%= @task.status %></p>
+</div>
 

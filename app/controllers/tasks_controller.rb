@@ -43,7 +43,7 @@ class TasksController < ApplicationController
 
   def myself 
     @user = current_user
-    @tasks = Task.index_myself(@user).page(params[:page])
+    @tasks = Task.index_myself(@user)
   end
 
   def edit_assignment

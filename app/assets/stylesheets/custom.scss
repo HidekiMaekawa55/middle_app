@@ -83,3 +83,25 @@ form select {
 .card-body {
   padding: 10px;
 }
+
+
+/* task assignment */
+.assignment-container {
+  display: flex;
+  .current-assignment,.new-assignment {
+    width: 50%;
+    padding-left: 10px;
+  }
+  .new-assignment > select {
+    width: 100% !important;
+  }
+}
+
+
+/* task-detail */
+.task-detail {
+  background: rgba(230, 225, 225, 0.6);
+  padding: 20px 45px 30px;
+  border-radius: 7px;
+  margin-top: 8px;
+}
