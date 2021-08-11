@@ -1,0 +1,147 @@
+・ユーザA作成
+User.create(email: "example3@example.com", name: "ユーザA", password: "password")
+
+
+・ユーザB作成
+User.create(email: "example4@example.com", name: "ユーザB", password: "password")
+
+・ユーザAのパスワードを更新
+User.find_by(name: "ユーザA").update(password: "password1")
+
+・ユーザBのメールアドレスを更新
+User.find_by(name: "ユーザB").update(email: "example5@example.com")
+
+・タスク作成 (instance.saveを使用, ユーザAに紐付ける)
+user = User.find_by(name: "ユーザA")
+task = Task.new(title: "exampleA", content: "example,example", deadline: "2021-08-10 16:00:00", status: "対応中")
+task.user_id = user.id
+task.save
+
+・タスク作成 (Class.createを使用, ユーザBに紐付ける)
+user = User.find_by(name: "ユーザB")
+Task.create(title: "exampleB", content: "example,example", deadline: "2021-08-10 16:00:00", status: "対応中", user_id: user.id)
+
+・10件一括タスク作成(ユーザAに紐付ける)
+user = User.find_by(name: "ユーザA")
+10.times.do
+Task.create(title: "exampleA", content: "example,example", deadline: "2021-08-10 16:00:00", status: "対応中", user_id: user.id)
+end
+
+・タスク一覧を取得
+Task.all
+
+・１番目のタスクを取得
+Task.first
+
+・idがXのタスクを取得
+Task.find(X)
+
+・最後のタスクを取得
+Task.last
+
+・userという変数にユーザAのオブジェクトを入れ、ユーザAに紐付くタスク一覧を取得
+user = User.find_by(name: "ユーザA")
+user.tasks
+
+・変数を用いずにユーザBに紐付くタスク一覧を取得
+Task.where(user_id: User.find_by(name: "ユーザB"))
+
+・変数を用いずにユーザAに紐付くタスクのレコード数を取得
+Task.where(user_id: User.find_by(name: "ユーザA")).count
+
+・タスクのidリストを取得 (mapを使用)
+Task.all.map { |x| x.id }
+
+・タスクのidリストを取得 (pluckを使用)
+Task.pluck(:id)
+
+・タスクのidリストを取得 (idsを使用)
+Task.ids
+
+・タスクのタイトルリストを取得 (mapを使用)
+Task.all.map { |x| x.title }
+
+・タスクのタイトルリストを取得 (pluckを使用)
+Task.pluck(:title)
+
+・ユーザAに紐付くタスクの中からステータスが「未対応」のタスクを作成日: 降順で取得
+user = User.find_by(name: "ユーザA")
+user.tasks.where(status: "未対応").order(created_at: "DESC")
+
+・ユーザAに紐付くタスクの中から期限切れのタスクを取得
+user = User.find_by(name: "ユーザA")
+user.tasks.map {|x| 
+if x.deadline = Time.now
+end
+}
+
+・ユーザAに紐付くタスクの中から期限が今日のタスクを取得
+
+
+・ユーザAに紐付くタスクの中からステータスが期限が１週間後のタスクを取得
+
+
+・ユーザAに紐付くタスクの中からステータスが期限が１ヶ月後のタスクを取得
+
+
+・ユーザAに紐付くタスクの中からタイトルに「作業」という文字列が入っているタスクを取得
+user = User.find_by(name: "ユーザA")
+user.tasks.where('title like ?', '%作業%')
+
+・ユーザAに紐付くタスクの中からステータスが「完了」になっているタスクを取得
+user = User.find_by(name: "ユーザA")
+user.tasks.where(status: "完了")
+
+・ユーザAに紐付くタスクの中からステータスが「未対応」のタスクを作成日: 降順で取得
+user = User.find_by(name: "ユーザA")
+user.tasks.where(status: "未対応").order(created_at: 'DESC')
+
+・ユーザAに紐付くタスクの一覧を取得したあと、最初のオブジェクトの更新日を取得
+user = User.find_by(name: "ユーザA")
+user.tasks
+user.tasks.first.updated_at
+
+・ユーザAに紐付くタスクの一覧を取得したあと、最後のオブジェクトのタイトルを取得
+user = User.find_by(name: "ユーザA")
+user.tasks
+user.tasks.last.title
+
+・ユーザAに紐付くタスクの中からステータスが「未対応」のタスクを「対応中」に一括更新
+user = User.find_by(name: "ユーザA")
+user.tasks.where(status: "未対応").update_all(status: "対応中")
+
+・ユーザAに紐付くタスクのタイトルを「作業依頼(n)」に一括更新 ※n: (1, 2, 3, ...n)
+user = User.find_by(name: "ユーザA")
+i = 1
+user.tasks.map { |n| 
+n.title = "作業依頼(#{i})"
+i += 1
+}
+
+・ユーザAに紐付くタスクの担当者を全てユーザBに一括更新
+userA = User.find_by(name: "ユーザA")
+userB = User.find_by(name: "ユーザB")
+userA.tasks.update_all(user_id: userB.id)
+
+・どれか１つのタスクを更新 (Class.updateを使用)
+
+
+・どれか１つのタスクを更新 (instance.updateを使用)
+user = User.find_by(name: "ユーザB")
+user.tasks.first.update(content: "example")
+
+・どれか１つのタスクを削除 (Class.destroyを使用)
+
+
+・どれか１つのタスクを削除 (instance.destroyを使用)
+user = User.find_by(name: "ユーザB")
+user.tasks.first.destroy
+
+・ユーザBに紐づいているタスクを一括削除
+user = User.find_by(name: "ユーザB")
+user.tasks.destroy_all
+
+
+
+
+
