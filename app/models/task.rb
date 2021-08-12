@@ -2,10 +2,12 @@ class Task < ApplicationRecord
   include ActiveRecord::AttributeAssignment
   belongs_to :user
   attribute :deadline
-  validates :title, presence: true
-  validates :content, presence: true
-  validates :deadline, presence: true
-  validates :status, presence: true
+  with_options presence: true do
+    validates :title
+    validates :content
+    validates :deadline
+    validates :status
+  end
 
   scope :index_all, -> {
     select(:id, :title, :content, :deadline, :status, :user_id)

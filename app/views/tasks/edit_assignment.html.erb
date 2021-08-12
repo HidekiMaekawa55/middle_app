@@ -17,6 +17,7 @@
 <div class="task-detail">
   <h1>タスク<%= @task.id %></h1>
   <p><%= @task.title %></p>
+  <p><%= @task.content %></p>
   <p>期限：<%= @task.deadline.to_s(:datetime_jp) %></p>
   <p>ステータス：<%= @task.status %></p>
 </div>

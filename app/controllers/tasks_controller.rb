@@ -1,7 +1,7 @@
 class TasksController < ApplicationController
   before_action :set_task,     only: [:show, :edit, :update, :destroy, :edit_assignment, :update_assignment]
-  before_action :sign_now,     only: [:new, :create, :edit, :update, :destroy, :myself]
-  before_action :correct_user, only: [:edit, :update, :destroy, :edit_assignment, :update_assignment]
+  before_action :logged_in_user,     only: [:new, :create, :edit, :update, :destroy, :myself]
+  before_action :can_edit_myself_task, only: [:edit, :update, :destroy, :edit_assignment, :update_assignment]
 
   def index
     @tasks = Task.index_all
@@ -29,7 +29,7 @@ class TasksController < ApplicationController
 
   def update
     if @task.update(task_params)
-      redirect_to tasks_path
+      redirect_to myself_tasks_path
     else
       render 'edit'
     end
@@ -64,14 +64,14 @@ class TasksController < ApplicationController
       params.require(:task).permit(:title, :content, :status, :deadline)
     end
 
-    def sign_now
+    def logged_in_user
       unless user_signed_in?
         redirect_to new_user_registration_path
         flash[:alert] = "この機能にはアカウント登録が必要です。"
       end
     end
 
-    def correct_user
+    def can_edit_myself_task
       unless @task.user == current_user
         redirect_to tasks_path
         flash[:alert] = "自分のタスクしか編集できません。"
