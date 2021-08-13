@@ -1,7 +1,6 @@
 ・ユーザA作成
 User.create(email: "example3@example.com", name: "ユーザA", password: "password")
 
-
 ・ユーザB作成
 User.create(email: "example4@example.com", name: "ユーザB", password: "password")
 
@@ -19,7 +18,7 @@ task.save
 
 ・タスク作成 (Class.createを使用, ユーザBに紐付ける)
 user = User.find_by(name: "ユーザB")
-Task.create(title: "exampleB", content: "example,example", deadline: "2021-08-10 16:00:00", status: "対応中", user_id: user.id)
+Task.create(title: "exampleB", content: "example,example", deadline: "2021-08-20 16:00:00", status: "対応中", user_id: user.id)
 
 ・10件一括タスク作成(ユーザAに紐付ける)
 user = User.find_by(name: "ユーザA")
@@ -70,19 +69,19 @@ user.tasks.where(status: "未対応").order(created_at: "DESC")
 
 ・ユーザAに紐付くタスクの中から期限切れのタスクを取得
 user = User.find_by(name: "ユーザA")
-user.tasks.map {|x| 
-if x.deadline = Time.now
-end
-}
+user.tasks.where("deadline < ?" , Time.zone.now)
 
 ・ユーザAに紐付くタスクの中から期限が今日のタスクを取得
+user = User.find_by(name: "ユーザA")
+user.tasks.where(deadline: Time.zone.today.beginning_of_day..Time.zone.today.end_of_day)
 
+・ユーザAに紐付くタスクの中から期限が１週間後のタスクを取得
+user = User.find_by(name: "ユーザB")
+user.tasks.where(deadline: 1.week.after.beginning_of_day..1.week.after.end_of_day)
 
-・ユーザAに紐付くタスクの中からステータスが期限が１週間後のタスクを取得
-
-
-・ユーザAに紐付くタスクの中からステータスが期限が１ヶ月後のタスクを取得
-
+・ユーザAに紐付くタスクの中から期限が１ヶ月後のタスクを取得
+user = User.find_by(name: "ユーザA")
+user.tasks.where(deadline: 1.month.after.beginning_of_day..1.month.after.end_of_day)
 
 ・ユーザAに紐付くタスクの中からタイトルに「作業」という文字列が入っているタスクを取得
 user = User.find_by(name: "ユーザA")
@@ -124,14 +123,14 @@ userB = User.find_by(name: "ユーザB")
 userA.tasks.update_all(user_id: userB.id)
 
 ・どれか１つのタスクを更新 (Class.updateを使用)
-
+Task.update(1, title: "example")
 
 ・どれか１つのタスクを更新 (instance.updateを使用)
 user = User.find_by(name: "ユーザB")
 user.tasks.first.update(content: "example")
 
 ・どれか１つのタスクを削除 (Class.destroyを使用)
-
+Task.destroy(1)
 
 ・どれか１つのタスクを削除 (instance.destroyを使用)
 user = User.find_by(name: "ユーザB")
@@ -140,8 +139,4 @@ user.tasks.first.destroy
 ・ユーザBに紐づいているタスクを一括削除
 user = User.find_by(name: "ユーザB")
 user.tasks.destroy_all
-
-
-
-
 

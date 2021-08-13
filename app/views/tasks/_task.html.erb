@@ -1,6 +1,6 @@
 <div class ="col-sm-6">
   <div class="card">
-    <% if task.deadline > Time.now %>
+    <% if task.deadline > Time.zone.now %>
       <h5 class="card-header card-green">タスク<%= task.id %></h5>
     <% else %>
       <h5 class="card-header card-red">タスク<%= task.id %></h5>
