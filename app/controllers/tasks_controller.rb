@@ -1,10 +1,10 @@
 class TasksController < ApplicationController
-  before_action :set_task,     only: [:show, :edit, :update, :destroy, :edit_assignment, :update_assignment]
-  before_action :logged_in_user,     only: [:new, :create, :edit, :update, :destroy, :myself]
-  before_action :can_edit_myself_task, only: [:edit, :update, :destroy, :edit_assignment, :update_assignment]
+  before_action :set_task,           only: [:show]
+  before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :myself, :edit_assignment, :update_assignment]
+  before_action :set_mytask,         only: [:edit, :update, :destroy, :edit_assignment, :update_assignment]
 
   def index
-    @tasks = Task.index_all
+    @tasks = Task.incomplete.includes(:user) 
   end
 
   def show
@@ -42,8 +42,7 @@ class TasksController < ApplicationController
   end
 
   def myself 
-    @user = current_user
-    @tasks = Task.index_myself(@user)
+    @tasks = current_user.tasks.incomplete.includes(:user) 
   end
 
   def edit_assignment
@@ -64,17 +63,7 @@ class TasksController < ApplicationController
       params.require(:task).permit(:title, :content, :status, :deadline)
     end
 
-    def logged_in_user
-      unless user_signed_in?
-        redirect_to new_user_registration_path
-        flash[:alert] = "この機能にはアカウント登録が必要です。"
-      end
-    end
-
-    def can_edit_myself_task
-      unless @task.user == current_user
-        redirect_to tasks_path
-        flash[:alert] = "自分のタスクしか編集できません。"
-      end
+    def set_mytask
+      @task = current_user.tasks.find(params[:id])
     end
 end
