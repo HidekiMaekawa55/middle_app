@@ -22,5 +22,14 @@ module MiddleApp
     config.active_record.default_timezone = :local
     Time::DATE_FORMATS[:datetime_jp] = '%Y年 %m月 %d日 %H時 %M分'
     config.i18n.default_locale = :ja
+
+    config.generators do |generator|
+      generator.test_framework :rspec,
+                       fixtures: false,
+               controller_specs: false,
+                   helper_specs: false,
+                  routing_specs: false
+      generator.fixture_replacement :factory_bot, dir: "spec/factories"
+    end
   end
 end
