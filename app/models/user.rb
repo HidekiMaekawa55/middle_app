@@ -1,11 +1,9 @@
 class User < ApplicationRecord
-  has_many :tasks
+  has_many :tasks, dependent: :destroy
+  validates :name, presence: true
   
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable,
          :confirmable, :lockable, :timeoutable
 
-  scope :user_all, -> {
-    select(:id, :name)
-  }
 end

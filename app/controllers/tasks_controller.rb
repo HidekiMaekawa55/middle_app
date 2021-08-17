@@ -46,7 +46,7 @@ class TasksController < ApplicationController
   end
 
   def edit_assignment
-    @users = User.user_all
+    @users = User.all
   end
 
   def update_assignment
