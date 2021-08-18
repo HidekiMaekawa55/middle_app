@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe 'Users', type: :request do
   let(:user) { create(:user) }
   let(:user_params) { attributes_for(:user) }
+  let(:user_last) { User.last }
   let(:invalid_user_params) { attributes_for(:user, email: " " )}
 
   describe 'get #sign_up' do
@@ -38,6 +39,25 @@ RSpec.describe 'Users', type: :request do
       end
       it 'The number of users increases by 1' do
         expect{ subject }.to change(User, :count).by(1)
+      end
+      context 'email transmission content' do
+        before { subject }
+        let(:mail) { ActionMailer::Base.deliveries.last }
+        it "email subject is 'メールアドレス確認メール'" do
+          expect(mail.subject).to eq "メールアドレス確認メール"
+        end
+        it 'mail to user.email' do
+          expect(mail.to).to eq [user_last.email]
+        end
+        it "mail from to 'njs.20598@gmail.com'" do
+          expect(mail.from).to eq ["njs.20598@gmail.com"]
+        end
+        it 'mail body contains user.email' do
+          expect(mail.body.encoded).to match user_last.email
+        end
+        it 'mail body contains user.confirmation_token' do
+          expect(mail.body.encoded).to match user_last.confirmation_token
+        end
       end
     end
     context 'invalid information' do
@@ -139,6 +159,25 @@ RSpec.describe 'Users', type: :request do
       end
       it 'has been sent one email' do
         expect{ subject }.to change(ActionMailer::Base.deliveries, :count).by(1)
+      end
+      context 'email transmission content' do
+        before { subject }
+        let(:mail) { ActionMailer::Base.deliveries.last }
+        it "email subject is 'メールアドレス確認メール'" do
+          expect(mail.subject).to eq "メールアドレス確認メール"
+        end
+        it "mail to  user's new email address" do
+          expect(mail.to).to eq ['edit@example.com']
+        end
+        it "mail from to 'njs.20598@gmail.com'" do
+          expect(mail.from).to eq ["njs.20598@gmail.com"]
+        end
+        it "mail body contains user's new email address" do
+          expect(mail.body.encoded).to match 'edit@example.com'
+        end
+        it 'mail body contains user.reload.confirmation_token' do
+          expect(mail.body.encoded).to match user.reload.confirmation_token
+        end
       end
     end
     context 'invalid information' do
