@@ -169,7 +169,4 @@ RSpec.describe 'Users', type: :request do
       expect(flash[:notice]).to eq('ログアウトしました。')
     end
   end
-
-  describe '#delete' do
-  end
 end
