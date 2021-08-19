@@ -24,7 +24,7 @@ RSpec.describe 'users signup', type: :system do
     it 'confirmed_at is nil' do
       expect(user_last.confirmed_at).to eq nil
     end
-    context 'Log in without user.email confirmation' do
+    context 'Log in without confirmation of user.email' do
       before do
         visit new_user_session_path
         fill_in 'Eメール',   with: user.email
@@ -38,7 +38,7 @@ RSpec.describe 'users signup', type: :system do
         expect(page).to have_current_path new_user_session_path
       end
     end
-    context 'Confirm user email address with valid information' do
+    context 'Authenticate user email address with valid information' do
       before { visit user_confirmation_path(confirmation_token: user_last.confirmation_token) }
       it 'get a notice message（メールアドレスが確認できました。)' do
         expect(page).to have_selector('.notice', text: 'メールアドレスが確認できました。')
@@ -46,7 +46,7 @@ RSpec.describe 'users signup', type: :system do
       it 'the value is entered in confirmed_at' do
         expect(user_last.reload.confirmed_at).to_not eq nil
       end
-      context 'Log in with user.email confirmation' do
+      context 'Log in with confirmation of user.email' do
         before do
           visit new_user_session_path
           fill_in 'Eメール',   with: user.email
@@ -58,7 +58,7 @@ RSpec.describe 'users signup', type: :system do
         end
       end
     end
-    context 'Confirm user email address with invalid information' do
+    context 'Authenticate user email address with invalid information' do
       before { visit user_confirmation_path(confirmation_token: 'invalid') }
       it 'get a alert message（パスワード確認用トークンは不正な値です)' do
         expect(page).to have_selector('.alert', text: 'パスワード確認用トークンは不正な値です')
