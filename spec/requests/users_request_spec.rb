@@ -208,4 +208,69 @@ RSpec.describe 'Users', type: :request do
       expect(flash[:notice]).to eq('ログアウトしました。')
     end
   end
+
+  describe 'get passwords#new（if forget password）' do
+    subject { get new_user_password_path }
+    context 'when user logged in' do
+      before { sign_in user }
+      it 'redirect to root_path' do
+        is_expected.to redirect_to root_path
+      end
+      it 'get a alert message' do
+        subject
+        expect(flash[:alert]).to be_truthy
+      end
+    end
+    context 'when user not logged in' do
+      it 'request succeds' do
+        is_expected.to eq 200
+      end
+    end
+  end 
+
+  describe 'post passwords#create（if forget password）' do
+    context 'valid information' do
+      subject { post user_password_path, params: { user: { email: user.email } } }
+      it "redirect to 'users/sign_in'" do
+        is_expected.to redirect_to new_user_session_path
+      end
+      it 'get a notice message' do
+        subject
+        expect(flash[:notice]).to be_truthy
+      end
+      it 'has been sent one email' do
+        expect{ subject }.to change(ActionMailer::Base.deliveries, :count).by(1)
+      end
+      context 'email transmission content' do
+        before { subject }
+        let(:mail) { ActionMailer::Base.deliveries.last }
+        it "email subject is 'パスワードの再設定について'" do
+          expect(mail.subject).to eq "パスワードの再設定について"
+        end
+        it "mail to  user's email address" do
+          expect(mail.to).to eq [user.email]
+        end
+        it "mail from to 'njs.20598@gmail.com'" do
+          expect(mail.from).to eq ["njs.20598@gmail.com"]
+        end
+        it "mail body contains user's email address" do
+          expect(mail.body.encoded).to match user.email
+        end
+        it "mail body contains user's email address" do
+          expect(mail.body.encoded).to match user.name
+        end
+      end
+    end
+    context 'invalid information' do
+      context 'invalid email address' do
+        subject { post user_password_path, params: { user: { email: "invalid@example.com" } } }
+        it 'render :new' do
+          is_expected.to render_template :new
+        end
+        it 'has not been sent email' do
+          expect{ subject }.to change(ActionMailer::Base.deliveries, :count).by(0)
+        end
+      end
+    end
+  end
 end
