@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe 'Users', type: :request do
   let(:user) { create(:user) }
-  let(:user_params) { attributes_for(:user) }
   let(:user_last) { User.last }
+  let(:user_params) { attributes_for(:user) }
   let(:invalid_user_params) { attributes_for(:user, email: " " )}
 
   describe 'get #sign_up' do
@@ -26,22 +26,20 @@ RSpec.describe 'Users', type: :request do
   end
 
   describe 'post registrations#create (sign up)' do
+    subject { post user_registration_path, params: { user: user_type } }
     context 'valid information' do
-      subject { post user_registration_path, params: { user: user_params } }
-      it 'request succeeds' do
-        is_expected.to eq 302
-      end
-      it 'has been sent one email' do
-        expect{ subject }.to change(ActionMailer::Base.deliveries, :count).by(1)
-      end
+      let(:user_type) { user_params }
       it 'redirect to root_path' do
         is_expected.to redirect_to root_path
       end
       it 'The number of users increases by 1' do
         expect{ subject }.to change(User, :count).by(1)
       end
+      it 'has been sent one email' do
+        expect{ subject }.to change(ActionMailer::Base.deliveries, :count).by(1)
+      end
       context 'email transmission content' do
-        before { subject }
+        # before { subject }
         let(:mail) { ActionMailer::Base.deliveries.last }
         it "email subject is 'メールアドレス確認メール'" do
           expect(mail.subject).to eq "メールアドレス確認メール"
@@ -61,7 +59,7 @@ RSpec.describe 'Users', type: :request do
       end
     end
     context 'invalid information' do
-      subject { post user_registration_path, params: { user: invalid_user_params } }
+      let(:user_type) { invalid_user_params }
       it 'has not been sent one email' do
         expect{ subject }.to change(ActionMailer::Base.deliveries, :count).by(0)
       end

@@ -3,32 +3,97 @@ require 'rails_helper'
 RSpec.describe 'Tasks', type: :request do
   let(:user)        { create(:user) }
   let(:other_user)  { create(:user) }
-  let!(:task)       { create(:task, user_id: user.id, title: 'my task') }
+  let!(:mytask)     { create(:task, user_id: user.id, title: 'my task') }
   let!(:other_task) { create(:task, user_id: other_user.id, title: 'other task') }
-  let(:build_task)  { build(:task) }
-  subject { get get_action_url }
 
   describe 'index action' do
-    before { create(:task, user_id: user.id, title: 'Completed task', status: "完了") }
-    let(:get_action_url) { tasks_path }
+    subject { get tasks_path }
+    let(:task_create) { create(:task, user_id: user.id, 
+                                      title: task_title, status: task_status) }
+    let(:advance_preparation) do
+      task_create
+      subject
+    end
     it 'request succeds' do
       is_expected.to eq 200
     end
-    it 'completed status are not displayed' do
-      subject
-      expect(response.body).to_not include('Completed task')
+    context "status is '未対応'" do
+      let(:task_title)  { '未対応タスク' }
+      let(:task_status) { '未対応' }
+      it 'completed status are not displayed' do
+        advance_preparation
+        expect(response.body).to include('未対応タスク')
+      end
+    end
+    context "status is '対応中'" do
+      let(:task_title)  { '対応中タスク' }
+      let(:task_status) { '対応中' }
+      it 'completed status are not displayed' do
+        advance_preparation
+        expect(response.body).to include('対応中タスク')
+      end
+    end
+    context "status is '完了'" do
+      let(:task_title)  { '完了タスク' }
+      let(:task_status) { '完了' }
+      it 'completed status are not displayed' do
+        advance_preparation
+        expect(response.body).to_not include('完了　タスク')
+      end
     end
   end
 
   describe 'show action' do
-    let(:get_action_url) { tasks_path(task) }
-    it 'request succeds' do
-      is_expected.to eq 200
+    subject { get task_path(task_type) }
+    context 'when user logged in' do
+      before  { sign_in user }
+      context 'mytask' do
+        let(:task_type) { mytask }
+        it 'request succeds' do
+          is_expected.to eq 200
+        end
+        it "'アサイン' is displayed'" do
+          subject
+          expect(response.body).to include('アサイン')
+        end
+        it "'編集' is displayed'" do
+          subject
+          expect(response.body).to include('編集')
+        end
+      end
+      context "other user's task" do
+        let(:task_type) { other_task }
+        it 'request succeds' do
+          is_expected.to eq 200
+        end
+        it "'アサイン' is not displayed'" do
+          subject
+          expect(response.body).to_not include('アサイン')
+        end
+        it "'編集' is not displayed'" do
+          subject
+          expect(response.body).to_not include('編集')
+        end
+      end
+    end
+    context 'when user not logged in' do
+      let(:task_type) { other_task }
+      it 'request succeds' do
+        is_expected.to eq 200
+      end
+      it "'アサイン' is not displayed'" do
+        subject
+        expect(response.body).to_not include('アサイン')
+      end
+      it "'編集' is not displayed'" do
+        subject
+        expect(response.body).to_not include('編集')
+      end
     end
   end
 
   describe 'new action' do
-    let(:get_action_url) { new_task_path }
+    subject { get new_task_path}
     context 'when user logged in' do
       before { sign_in user }
       it 'request succeds' do
@@ -43,20 +108,25 @@ RSpec.describe 'Tasks', type: :request do
   end
 
   describe 'create action' do
+    subject { post tasks_path, params: { task: attributes_for(:task, title: task_title) } }
     context 'when user logged in' do 
       before { sign_in user }
-      context 'Success task creation' do
-        subject { post tasks_path, params: { task: attributes_for(:task) } }
-        it 'The number of tasks increases by 1' do
+      context 'valid information' do
+        let(:task_title) { "create task" }
+        it 'the number of tasks increases by 1' do
           expect{ subject }.to change(Task, :count).by(1)
         end
         it 'redirect_to myself_tasks_path' do
           is_expected.to redirect_to myself_tasks_path
         end
+        it 'the created task is displayed' do
+          subject
+          expect(response.body).to_not include('create task')
+        end
       end
-      context 'Fails task creation' do
-        subject { post tasks_path, params: { task: attributes_for(:task, title: " " ) } }
-        it 'The number of tasks does not increase' do
+      context 'invalid information' do
+        let(:task_title) { " " }
+        it 'the number of tasks does not increase' do
           expect{ subject }.to change(Task, :count).by(0)
         end
         it 'render tasks/new' do
@@ -69,7 +139,7 @@ RSpec.describe 'Tasks', type: :request do
       end
     end
     context 'when user not logged in' do
-      subject { post tasks_path, params: { task: build_task } }
+      let(:task_title) { "create task" }
       it "redirect to 'users/sign_in'" do
         is_expected.to redirect_to new_user_session_path
       end
@@ -77,25 +147,32 @@ RSpec.describe 'Tasks', type: :request do
   end
 
   describe 'edit action' do
+    subject { get edit_task_path(task_type) }
     context 'when user logged in' do
-      before do
-        sign_in user
-      end
-      context 'Access my task edit screen' do
-        let(:get_action_url) { edit_task_path(task) }
+      before { sign_in user }
+      context 'Access mytask edit screen' do
+        let(:task_type) { mytask }
         it 'request succeds' do
           is_expected.to eq 200
         end
+        it 'title is displayed in the edit form' do
+          subject
+          expect(response.body).to include(mytask.title)
+        end
+        it 'content is displayed in the edit form' do
+          subject
+          expect(response.body).to include(mytask.content)
+        end
       end
       context "Access other user's task edit screen" do
-        let(:get_action_url) { edit_task_path(other_task) }
+        let(:task_type) { other_task }
         it 'return 404 error' do
           expect{ subject }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
     end
     context 'when user not logged in' do
-      let(:get_action_url) { edit_task_path(task) }
+      let(:task_type) { other_task }
       it "redirect to 'users/sign_in'" do
         is_expected.to redirect_to new_user_session_path
       end
@@ -103,24 +180,27 @@ RSpec.describe 'Tasks', type: :request do
   end
 
   describe 'update action' do
+    subject { patch task_path(task_type), params: { task: attributes_for(:task, title: task_title) } }
     context 'when user logged in' do
       before { sign_in user }
-      context 'update my task' do
-        context 'Success task update' do
-          subject { patch task_path(task), params: { task: attributes_for(:task, title: "update title") } }
+      context 'update mytask' do
+        context 'valid information' do
+          let(:task_type)  { mytask }
+          let(:task_title) { "Update task" }
           it "change title from 'test title' to 'update title'" do
             subject
-            expect(task.reload.title).to eq "update title"
+            expect(mytask.reload.title).to eq "Update task"
           end
           it 'redirect to myself_tasks_path' do
             is_expected.to redirect_to myself_tasks_path
           end
         end
-        context 'Fails task update' do
-          subject { patch task_path(task), params: { task: attributes_for(:task, title: " ") } }
+        context 'invalid information' do
+          let(:task_type)  { mytask }
+          let(:task_title) { " " }
           it "task title cannot update from 'test title' to empty field" do
             subject
-            expect(task.reload.title).to_not eq " "
+            expect(mytask.reload.title).to_not eq " "
           end
           it 'render tasks/edit' do
             is_expected.to render_template :edit
@@ -128,14 +208,16 @@ RSpec.describe 'Tasks', type: :request do
         end
       end
       context "update other user's task" do
-        subject { patch task_path(other_task) }
+        let(:task_type)  { other_task }
+        let(:task_title) { "Update task" }
         it 'return 404 error' do
           expect{ subject }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
     end
     context 'when user not logged in' do
-      subject { patch task_path(task) }
+      let(:task_type)  { other_task }
+      let(:task_title) { "Update task" }
       it "redirect to 'users/sign_in'" do
         is_expected.to redirect_to new_user_session_path
       end
@@ -143,10 +225,11 @@ RSpec.describe 'Tasks', type: :request do
   end
 
   describe 'destroy action' do
+    subject { delete task_path(task_type) }
     context 'when user logged in' do
       before { sign_in user }
-      context 'destroy my task' do
-        subject { delete task_path(task) }
+      context 'destroy mytask' do
+        let(:task_type) { mytask }
         it '1 task has been reduced' do
           expect{ subject }.to change(Task, :count).by(-1)
         end
@@ -159,14 +242,14 @@ RSpec.describe 'Tasks', type: :request do
         end
       end
       context "destroy other user's task" do
-        subject { delete task_path(other_task) }
+        let(:task_type) { other_task }
         it 'return 404 error' do
           expect{ subject }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
     end
     context 'when user not logged in' do
-      subject { delete task_path(task) }
+      let(:task_type) { other_task }
       it "redirect to 'users/sign_in'" do
         is_expected.to redirect_to new_user_session_path
       end
@@ -174,27 +257,22 @@ RSpec.describe 'Tasks', type: :request do
   end
 
   describe 'myself action' do
+    subject { get myself_tasks_path }
     context 'when user logged in' do
-      before { sign_in user}
-      let(:get_action_url) { myself_tasks_path }
+      before { sign_in user }
       it 'request succeds' do
         is_expected.to eq 200
       end
-      it 'current user task is displayed' do
+      it 'mytask is displayed' do
         subject
         expect(response.body).to include('my task')
       end
-      it 'other user task is not displayed' do
+      it 'other task is not displayed' do
         subject
         expect(response.body).to_not include('other task')
       end
-      it 'completed status are not displayed' do
-        subject
-        expect(response.body).to_not include('Completed task')
-      end
     end
     context 'when user not logged in' do
-      let(:get_action_url) { myself_tasks_path }
       it "redirect to 'users/sign_in'" do
         is_expected.to redirect_to new_user_session_path
       end
@@ -202,23 +280,24 @@ RSpec.describe 'Tasks', type: :request do
   end
 
   describe 'edit_assignment action' do
+    subject { get edit_assignment_task_path(task_type) }
     context 'when user logged in' do
       before { sign_in user }
-      context 'Access my task assignment edit screen' do
-        let(:get_action_url) { edit_assignment_task_path(task) }
+      context 'access my task assignment edit screen' do
+        let(:task_type) { mytask }
         it 'request succeds' do
           is_expected.to eq 200
         end
       end
-      context "Access other user's task assignment edit screen" do
-        let(:get_action_url) { edit_assignment_task_path(other_task) }
+      context "access other user's task assignment edit screen" do
+        let(:task_type) { other_task }
         it 'return 404 error' do
           expect{ subject }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
     end
     context 'when user not logged in' do
-      let(:get_action_url) { edit_assignment_task_path(task) }
+      let(:task_type) { other_task }
       it "redirect to 'users/sign_in'" do
         is_expected.to redirect_to new_user_session_path
       end
@@ -226,27 +305,31 @@ RSpec.describe 'Tasks', type: :request do
   end
 
   describe 'update_assignment action' do
+    subject { patch update_assignment_task_path(task_type), { params: { user_id: user_type.id } } }
     context 'when user logged in' do
       before { sign_in user }
       context 'update my task assignment' do
-        subject { patch update_assignment_task_path(task), { params: { user_id: other_user.id } } }
+        let(:task_type) { mytask }
+        let(:user_type) { other_user }
         it 'change user_id from user.id to other_user.id' do
           subject
-          expect(task.reload.user_id).to eq other_user.id
+          expect(mytask.reload.user_id).to eq other_user.id
         end
         it 'redirect to tasks_path' do
           is_expected.to redirect_to tasks_path
         end
       end
       context "update other user's task assignment" do
-        subject { patch update_assignment_task_path(other_task), { params: { user_id: user.id } } }
+        let(:task_type) { other_user }
+        let(:user_type) { user }
         it 'return 404 error' do
           expect{ subject }.to raise_error(ActiveRecord::RecordNotFound)
         end
       end
     end
     context 'when user not logged in' do
-      subject { patch update_assignment_task_path(task), { params: { user_id: other_user.id } } }
+      let(:task_type) { other_user }
+      let(:user_type) { user }
       it "redirect to 'users/sign_in'" do
         is_expected.to redirect_to new_user_session_path
       end
