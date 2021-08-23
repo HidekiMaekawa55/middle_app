@@ -32,14 +32,14 @@ RSpec.describe 'Users', type: :request do
       it 'redirect to root_path' do
         is_expected.to redirect_to root_path
       end
-      it 'The number of users increases by 1' do
+      it 'the number of users increases by 1' do
         expect{ subject }.to change(User, :count).by(1)
       end
       it 'has been sent one email' do
         expect{ subject }.to change(ActionMailer::Base.deliveries, :count).by(1)
       end
       context 'email transmission content' do
-        # before { subject }
+        before { subject }
         let(:mail) { ActionMailer::Base.deliveries.last }
         it "email subject is 'メールアドレス確認メール'" do
           expect(mail.subject).to eq "メールアドレス確認メール"
@@ -60,14 +60,14 @@ RSpec.describe 'Users', type: :request do
     end
     context 'invalid information' do
       let(:user_type) { invalid_user_params }
-      it 'has not been sent one email' do
-        expect{ subject }.to change(ActionMailer::Base.deliveries, :count).by(0)
-      end
       it 'render :new' do
         is_expected.to render_template :new
       end
-      it 'the number of users does not increase' do
+      it 'the number of users no change' do
         expect{ subject }.to change(User, :count).by(0)
+      end
+      it 'has not been sent one email' do
+        expect{ subject }.to change(ActionMailer::Base.deliveries, :count).by(0)
       end
     end
   end
@@ -92,8 +92,11 @@ RSpec.describe 'Users', type: :request do
   end
 
   describe 'post sessions#create (sign in)' do
+    subject { post user_session_path, params: { user: { email:    user_email, 
+                                                        password: user_password } } }
     context 'valid information' do
-      subject { post user_session_path, params: { user: { email: user.email, password: user.password } } }
+      let(:user_email)    { user.email }
+      let(:user_password) { user.password }
       it 'request succeds' do
         is_expected.to redirect_to root_path
       end
@@ -103,7 +106,8 @@ RSpec.describe 'Users', type: :request do
       end
     end
     context 'invalid information' do
-      subject { post user_session_path, params: { user: invalid_user_params } }
+      let(:user_email)    { "invalid" }
+      let(:user_password) { "invalid"}
       it 'render :new' do
         is_expected.to render_template :new
       end
@@ -115,9 +119,9 @@ RSpec.describe 'Users', type: :request do
   end
 
   describe 'get #edit' do
+    subject { get edit_user_registration_path }
     context 'when user logged in' do
       before { sign_in user }
-      subject { get edit_user_registration_path }
       it 'request succeds' do
         is_expected.to eq 200
       end
@@ -131,7 +135,6 @@ RSpec.describe 'Users', type: :request do
       end
     end
     context 'when user not logged in' do
-      subject { get edit_user_registration_path }
       it "redirect to 'users/sign_in'" do
         is_expected.to redirect_to new_user_session_path
       end
@@ -143,11 +146,15 @@ RSpec.describe 'Users', type: :request do
   end
 
   describe 'patch registrations#update (update user details)' do
+    subject { patch user_registration_path, params: { user: {
+                                           name:             user_name,
+                                           email:            user_email,
+                                           current_password: user_password } } }
     before { sign_in user }
     context 'valid information' do
-      subject { patch user_registration_path, params: { user: { name:  'Edit User',
-                                                                email: 'edit@example.com',
-                                                                current_password: user.password } } }
+      let(:user_name)     { 'Edit User' }
+      let(:user_email)    { 'edit@example.com' }
+      let(:user_password) { user.password }
       it 'redirect to root_path' do
         is_expected.to redirect_to root_path
       end
@@ -179,13 +186,13 @@ RSpec.describe 'Users', type: :request do
       end
     end
     context 'invalid information' do
-      subject { patch user_registration_path, params: { user: { name:  ' ',
-                                                                email: ' ',
-                                                                current_password: user.password } } }
+      let(:user_name)     { 'Edit User' }
+      let(:user_email)    { 'edit@example.com' }
+      let(:user_password) { 'invalid' }
       it 'render :edit' do
         is_expected.to render_template :edit
       end
-      it "cannot update user.name from 'Test Tarou' to ' '" do
+      it "cannot update user.name from 'Test Tarou' to 'Edit User'" do
         subject
         expect(user.reload.name).to eq 'Test Tarou'
       end
@@ -196,8 +203,8 @@ RSpec.describe 'Users', type: :request do
   end
 
   describe '#logout' do
-    before { sign_in user }
     subject { delete destroy_user_session_path }
+    before { sign_in user }
     it 'redirect to root_path' do
       is_expected.to redirect_to root_path
     end
@@ -227,8 +234,9 @@ RSpec.describe 'Users', type: :request do
   end 
 
   describe 'post passwords#create（if forget password）' do
+    subject { post user_password_path, params: { user: { email: user_email } } }
     context 'valid information' do
-      subject { post user_password_path, params: { user: { email: user.email } } }
+      let(:user_email) { user.email }
       it "redirect to 'users/sign_in'" do
         is_expected.to redirect_to new_user_session_path
       end
@@ -258,7 +266,7 @@ RSpec.describe 'Users', type: :request do
     end
     context 'invalid information' do
       context 'invalid email address' do
-        subject { post user_password_path, params: { user: { email: "invalid@example.com" } } }
+        let(:user_email) { "invalid@exmaple.com" }
         it 'render :new' do
           is_expected.to render_template :new
         end

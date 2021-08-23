@@ -13,7 +13,7 @@ RSpec.describe 'users signup', type: :system do
       click_button 'Sign up'
     end
     it 'get a notice message' do
-      expect(page).to have_selector('.notice', text: '本人確認用のメールを送信しました。メール内のリンクからアカウントを有効化させてください。')
+      expect(page).to have_selector('.notice', text: '本人確認用のメールを送信しました。')
     end
     it 'redirect to root_path' do
       expect(page).to have_current_path root_path
@@ -32,14 +32,16 @@ RSpec.describe 'users signup', type: :system do
         click_button 'Log in'
       end
       it 'get a alert message（メールアドレスの本人確認が必要です。)' do
-        expect(page).to have_selector('.alert', text: 'メールアドレスの本人確認が必要です。')
+        expect(page).to have_selector('.alert', text: '本人確認が必要です。')
       end
       it 'render :new' do
         expect(page).to have_current_path new_user_session_path
       end
     end
     context 'Authenticate user email address with valid information' do
-      before { visit user_confirmation_path(confirmation_token: user_last.confirmation_token) }
+      before { 
+        visit user_confirmation_path(confirmation_token: user_last.confirmation_token) 
+      }
       it 'get a notice message（メールアドレスが確認できました。)' do
         expect(page).to have_selector('.notice', text: 'メールアドレスが確認できました。')
       end
@@ -70,7 +72,7 @@ RSpec.describe 'users signup', type: :system do
           click_button 'Resend confirmation instructions'
         end
         it 'get a notice message（アカウントの有効化について数分以内にメールでご連絡します。)' do
-          expect(page).to have_selector('.notice', text: 'アカウントの有効化について数分以内にメールでご連絡します。')
+          expect(page).to have_selector('.notice', text: 'アカウントの有効化について')
         end
         it 'has been sent resend confirmation email' do
           expect(ActionMailer::Base.deliveries.size).to eq(1)
