@@ -13,16 +13,16 @@ RSpec.describe 'users email edit', type: :system do
     before do
       visit edit_user_registration_path 
       fill_in 'Eメール',          with: 'edit_email@example.com'
-      fill_in '現在のパスワード', with: user.password
+      fill_in '現在のパスワード',   with: user.password
       click_button 'Update'
     end
     it 'redirect to root_path' do
       expect(page).to have_current_path root_path
     end
     it 'get a notice message' do
-      expect(page).to have_selector('.notice', text: 'アカウント情報を変更しました。変更されたメールアドレスの本人確認のため、本人確認用メールより確認処理をおこなってください。')
+      expect(page).to have_selector('.notice', text: '本人確認用メールより確認処理をおこなってください。')
     end
-    it 'has been sent confirmation email' do
+    it 'has been sent one confirmation email' do
       expect(ActionMailer::Base.deliveries.size).to eq(1)
     end
     it 'email address has not changed yet' do
@@ -61,7 +61,7 @@ RSpec.describe 'users email edit', type: :system do
       before do
         visit edit_user_registration_path 
         fill_in 'Eメール',          with: 'edit_email@example.com'
-        fill_in '現在のパスワード', with: 'invalid'
+        fill_in '現在のパスワード',   with: 'invalid'
         click_button 'Update'
       end
       it 'get a alert message' do
