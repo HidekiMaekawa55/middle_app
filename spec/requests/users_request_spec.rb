@@ -256,9 +256,6 @@ RSpec.describe 'Users', type: :request do
         it "mail body contains user's email address" do
           expect(mail.body.encoded).to match user.email
         end
-        it "mail body contains user's email address" do
-          expect(mail.body.encoded).to match user.name
-        end
       end
     end
     context 'invalid information' do
