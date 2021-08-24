@@ -22,7 +22,7 @@ Task.create(title: "exampleB", content: "example,example", deadline: "2021-08-20
 
 ・10件一括タスク作成(ユーザAに紐付ける)
 user = User.find_by(name: "ユーザA")
-10.times.do
+30.times do
 Task.create(title: "exampleA", content: "example,example", deadline: "2021-08-10 16:00:00", status: "対応中", user_id: user.id)
 end
 

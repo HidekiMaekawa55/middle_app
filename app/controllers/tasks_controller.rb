@@ -4,7 +4,8 @@ class TasksController < ApplicationController
   before_action :set_mytask,         only: [:edit, :update, :destroy, :edit_assignment, :update_assignment]
 
   def index
-    @tasks = Task.incomplete(params[:keyword]).includes(:user)
+    tasks  = Task.incomplete(params[:keyword]).includes(:user)
+    @tasks = tasks.page(params[:page]).per(16)
   end
 
   def show
@@ -42,7 +43,8 @@ class TasksController < ApplicationController
   end
 
   def myself 
-    @tasks = current_user.tasks.incomplete(params[:keyword]).includes(:user) 
+    tasks  = current_user.tasks.incomplete(params[:keyword]).includes(:user) 
+    @tasks = tasks.page(params[:page]).per(10)
   end
 
   def edit_assignment

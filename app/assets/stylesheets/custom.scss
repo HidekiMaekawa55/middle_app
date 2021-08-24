@@ -42,6 +42,21 @@ body {
 }
 
 
+/* header */
+@media (max-width: 992px) {
+  .nav > li > a {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+}
+
+@media (max-width: 767px) {
+  .nav > p {
+    padding: 0 13px;
+  }
+}
+
+
 /* form */
 form select {
   display: inline-block !important;
@@ -83,6 +98,28 @@ form select {
 .card-body {
   padding: 10px;
 }
+
+
+/* pagination */
+.pagination {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.pagination > li > a {          
+  border: none;    
+  color: #696969; 
+  &:hover {
+    border-radius: 15px; 
+  }
+}
+
+.pagination > .active > a {     
+  background: #93c9ff;  
+  border-radius: 15px;   
+}
+
+
 
 
 /* task assignment */
