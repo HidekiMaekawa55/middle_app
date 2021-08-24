@@ -8,36 +8,28 @@ RSpec.describe 'Tasks', type: :request do
 
   describe 'index action' do
     subject { get tasks_path }
-    let(:task_create) { create(:task, user_id: user.id, 
-                                      title: task_title, status: task_status) }
-    let(:advance_preparation) do
-      task_create
+    before(:example) do
+      create(:task, user_id: user.id, title: task_title, status: task_status) 
       subject
-    end
-    it 'request succeds' do
-      is_expected.to eq 200
     end
     context "status is '未対応'" do
       let(:task_title)  { '未対応タスク' }
       let(:task_status) { '未対応' }
-      it 'completed status are not displayed' do
-        advance_preparation
+      it 'is displayed' do
         expect(response.body).to include('未対応タスク')
       end
     end
     context "status is '対応中'" do
       let(:task_title)  { '対応中タスク' }
       let(:task_status) { '対応中' }
-      it 'completed status are not displayed' do
-        advance_preparation
+      it 'is displayed' do
         expect(response.body).to include('対応中タスク')
       end
     end
     context "status is '完了'" do
       let(:task_title)  { '完了タスク' }
       let(:task_status) { '完了' }
-      it 'completed status are not displayed' do
-        advance_preparation
+      it 'is not displayed' do
         expect(response.body).to_not include('完了　タスク')
       end
     end
@@ -93,7 +85,7 @@ RSpec.describe 'Tasks', type: :request do
   end
 
   describe 'new action' do
-    subject { get new_task_path}
+    subject { get new_task_path }
     context 'when user logged in' do
       before { sign_in user }
       it 'request succeds' do
