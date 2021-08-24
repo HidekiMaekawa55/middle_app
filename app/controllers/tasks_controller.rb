@@ -5,7 +5,7 @@ class TasksController < ApplicationController
 
   def index
     tasks  = Task.incomplete(params[:keyword]).includes(:user)
-    @tasks = tasks.page(params[:page]).per(16)
+    @tasks = tasks.page(params[:page]).per(20)
   end
 
   def show
@@ -44,7 +44,7 @@ class TasksController < ApplicationController
 
   def myself 
     tasks  = current_user.tasks.incomplete(params[:keyword]).includes(:user) 
-    @tasks = tasks.page(params[:page]).per(10)
+    @tasks = tasks.page(params[:page]).per(16)
   end
 
   def edit_assignment

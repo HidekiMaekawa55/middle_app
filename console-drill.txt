@@ -21,8 +21,8 @@ user = User.find_by(name: "ユーザB")
 Task.create(title: "exampleB", content: "example,example", deadline: "2021-08-20 16:00:00", status: "対応中", user_id: user.id)
 
 ・10件一括タスク作成(ユーザAに紐付ける)
-user = User.find_by(name: "ユーザA")
-30.times do
+user = User.find_by(name: "ユーザC")
+10.times do
 Task.create(title: "exampleA", content: "example,example", deadline: "2021-08-10 16:00:00", status: "対応中", user_id: user.id)
 end
 
@@ -114,6 +114,7 @@ user = User.find_by(name: "ユーザA")
 i = 1
 user.tasks.map { |n| 
 n.title = "作業依頼(#{i})"
+n.save
 i += 1
 }
 
