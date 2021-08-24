@@ -1,4 +1,6 @@
 <h1>マイタスク</h1>
 <p><%= link_to "New Task", new_task_path, class: "btn btn-default" %></p>
 
+<%= render 'select_form', url: myself_tasks_path %>
+
 <%= render @tasks %>
