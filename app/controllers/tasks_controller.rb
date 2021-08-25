@@ -4,9 +4,12 @@ class TasksController < ApplicationController
   before_action :set_mytask,         only: [:edit, :update, :destroy, :edit_assignment, :update_assignment]
 
   def index
-    tasks     = Task.incomplete(params[:status],params[:keyword]).includes(:user)
     @per_page = params[:per_page]
-    @tasks    = tasks.page(params[:page]).per(@per_page)
+    tasks = Task.incomplete(params[:status]).order_by_keyword(params[:keyword]).includes(:user)
+    @tasks = tasks.page(params[:page]).per(@per_page)
+    unless params[:status] 
+      params[:status] = ["未対応","対応中"]
+    end 
   end
 
   def show

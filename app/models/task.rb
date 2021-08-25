@@ -7,8 +7,12 @@ class Task < ApplicationRecord
     validates :status
   end
 
-  scope :incomplete, -> (status, keyword) {
+  scope :incomplete, -> (status) {
     where(status: status || ["未対応", "対応中"])
-    .order(keyword)
+  }
+
+  scope :order_by_keyword, -> (keyword) {
+    return unless column_names.include?(keyword.to_s.split[0])
+    order(keyword)
   }
 end

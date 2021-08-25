@@ -6,8 +6,8 @@
                               期限が近い順:   "deadline asc",
                               期限が遠い順:   "deadline desc" }, params[:keyword] ) %>
 
-  <%= f.check_box :status, {checked: true, multiple: true}, "未対応", nil %> 未対応
-  <%= f.check_box :status, {checked: true, multiple: true}, "対応中", nil %> 対応中
+  <%= f.check_box :status, { checked: params[:status].include?("未対応"), multiple: true}, "未対応", 0 %> 未対応
+  <%= f.check_box :status, { checked: params[:status].include?("対応中"), multiple: true}, "対応中", nil %> 対応中
   <%= f.check_box :status, {multiple: true}, "完了", nil %> 完了
 
   <%= f.submit "並べ替え", class: "btn btn-warning" %>
