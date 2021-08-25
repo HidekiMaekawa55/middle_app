@@ -4,8 +4,9 @@ class TasksController < ApplicationController
   before_action :set_mytask,         only: [:edit, :update, :destroy, :edit_assignment, :update_assignment]
 
   def index
-    tasks  = Task.incomplete(params[:keyword]).includes(:user)
-    @tasks = tasks.page(params[:page]).per(20)
+    tasks     = Task.incomplete(params[:status],params[:keyword]).includes(:user)
+    @per_page = params[:per_page]
+    @tasks    = tasks.page(params[:page]).per(@per_page)
   end
 
   def show
@@ -16,10 +17,9 @@ class TasksController < ApplicationController
   end
 
   def create
-    @task = Task.new(task_params)
-    @task.user_id = current_user.id
+    @task = current_user.tasks.build(task_params)
     if @task.save
-      redirect_to myself_tasks_path
+      redirect_to myself_tasks_path, notice: '正しく作成されました。'
     else
       render 'new'
     end
@@ -30,7 +30,7 @@ class TasksController < ApplicationController
 
   def update
     if @task.update(task_params)
-      redirect_to myself_tasks_path
+      redirect_to myself_tasks_path, notice: "タスク#{@task.id}を編集しました。"
     else
       render 'edit'
     end
@@ -38,8 +38,7 @@ class TasksController < ApplicationController
 
   def destroy
     @task.destroy
-    redirect_to tasks_path
-    flash[:notice] = "タスク#{@task.id}を削除しました"
+    redirect_to tasks_path, notice: "タスク#{@task.id}を削除しました"
   end
 
   def myself 
@@ -53,7 +52,7 @@ class TasksController < ApplicationController
 
   def update_assignment
     @task.update(user_id: params[:user_id])
-    redirect_to tasks_path
+    redirect_to tasks_path, notice: "タスク#{@task.id}の担当者を変更しました。"
   end
 
   private

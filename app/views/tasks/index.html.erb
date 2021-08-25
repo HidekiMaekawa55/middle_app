@@ -1,7 +1,6 @@
 <h1>タスク一覧</h1>
-
 <%= render 'select_form', url: tasks_path %>
 
-<%= paginate @tasks %></br>
+<%= render 'paginate_and_dropdown_menu' %>
 
 <%= render @tasks %>

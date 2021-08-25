@@ -1,8 +1,14 @@
 <%= form_with(url: url, method: :get, local: true) do |f| %>
-  <%= f.select :keyword, [ ['投稿が新しい順', 'created_at asc'],
-                           ['投稿が古い順', 'created_at desc'],
-                           ['期限が近い順', 'deadline asc'],
-                           ['期限が遠い順', 'deadline desc'] ], {prompt: "選択してください"} %>
-                           
+
+  <%= f.select "keyword", options_for_select( { 
+                              投稿が新しい順: "created_at asc", 
+                              投稿が古い順:   "created_at desc", 
+                              期限が近い順:   "deadline asc",
+                              期限が遠い順:   "deadline desc" }, params[:keyword] ) %>
+
+  <%= f.check_box :status, {checked: true, multiple: true}, "未対応", nil %> 未対応
+  <%= f.check_box :status, {checked: true, multiple: true}, "対応中", nil %> 対応中
+  <%= f.check_box :status, {multiple: true}, "完了", nil %> 完了
+
   <%= f.submit "並べ替え", class: "btn btn-warning" %>
 <% end %>

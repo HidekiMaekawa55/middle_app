@@ -99,11 +99,21 @@ form select {
   padding: 10px;
 }
 
+.dropdown {
+  margin: 7px 0 5px;
+  line-height: 27px;
+  display: inline-block;
+}
+
+.dropdown > .btn {
+  padding: 4px 6px !important;
+}
+
 
 /* pagination */
 .pagination {
-  margin-top: 10px;
-  margin-bottom: 0;
+  margin: 7px 20px 5px 0;
+  float: left;
 }
 
 .pagination > li > a {          
@@ -141,3 +151,4 @@ form select {
   border-radius: 7px;
   margin-top: 8px;
 }
+
