@@ -1,6 +1,6 @@
 class TasksController < ApplicationController
-  before_action :set_task,           only: [:show]
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :myself, :edit_assignment, :update_assignment]
+  before_action :set_task,           only: [:show]
   before_action :set_mytask,         only: [:edit, :update, :destroy, :edit_assignment, :update_assignment]
   before_action :set_params_status,  only: [:index, :myself]
 

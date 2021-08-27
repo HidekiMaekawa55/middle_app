@@ -1,26 +1,3 @@
 <h1>新規タスク</h1>
 
-<%= form_with(model: @task, local: true) do |f| %>
-  <%= render 'shared/error_messages', object: f.object %>
-  <div class="form-group">  
-    <%= f.label :title %>
-    <%= f.text_field :title, class: "form-control", placeholder: "titleを入力してください。" %>
-  </div>
-  <div class="form-group">
-    <%= f.label :content %>
-    <%= f.text_area :content, class: "form-control", placeholder: "contentを入力してください。" %>
-  </div>
-  <div class="date-time">
-    <label class="control-label">Deadline</label><br>
-    <%= f.datetime_select :deadline, {}, class: 'form-control' %>
-  </div>
-  <div class="radio">
-    <label class="radio-inline">
-      <%= f.radio_button :status, :未対応 %> 未対応
-    </label>
-    <label class="radio-inline">
-      <%= f.radio_button :status, :対応中 %> 対応中
-    </label>
-  </div>
-  <%= f.submit "登録する", class: "btn btn-primary" %>
-<% end %>
+<%= render 'form', select_completion: false %>
