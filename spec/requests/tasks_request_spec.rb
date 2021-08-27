@@ -6,33 +6,14 @@ RSpec.describe 'Tasks', type: :request do
   let!(:mytask)     { create(:task, user_id: user.id, title: 'my task') }
   let!(:other_task) { create(:task, user_id: other_user.id, title: 'other task') }
 
+  shared_examples :success_request do |template_name|
+    it { is_expected.to eq 200 }
+    it { is_expected.to render_template(template_name) }
+  end
+
   describe 'index action' do
     subject { get tasks_path }
-    before(:example) do
-      create(:task, user_id: user.id, title: task_title, status: task_status) 
-      subject
-    end
-    context "status is '未対応'" do
-      let(:task_title)  { '未対応タスク' }
-      let(:task_status) { '未対応' }
-      it 'is displayed' do
-        expect(response.body).to include('未対応タスク')
-      end
-    end
-    context "status is '対応中'" do
-      let(:task_title)  { '対応中タスク' }
-      let(:task_status) { '対応中' }
-      it 'is displayed' do
-        expect(response.body).to include('対応中タスク')
-      end
-    end
-    context "status is '完了'" do
-      let(:task_title)  { '完了タスク' }
-      let(:task_status) { '完了' }
-      it 'is not displayed' do
-        expect(response.body).to_not include('完了　タスク')
-      end
-    end
+    it_behaves_like :success_request, :index
   end
 
   describe 'show action' do

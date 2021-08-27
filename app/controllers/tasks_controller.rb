@@ -2,14 +2,11 @@ class TasksController < ApplicationController
   before_action :set_task,           only: [:show]
   before_action :authenticate_user!, only: [:new, :create, :edit, :update, :destroy, :myself, :edit_assignment, :update_assignment]
   before_action :set_mytask,         only: [:edit, :update, :destroy, :edit_assignment, :update_assignment]
+  before_action :set_params_status,  only: [:index, :myself]
 
   def index
-    @per_page = params[:per_page]
     tasks = Task.incomplete(params[:status]).order_by_keyword(params[:keyword]).includes(:user)
-    @tasks = tasks.page(params[:page]).per(@per_page)
-    unless params[:status] 
-      params[:status] = ["未対応","対応中"]
-    end 
+    @tasks = tasks.page(params[:page]).per(20)
   end
 
   def show
@@ -45,7 +42,7 @@ class TasksController < ApplicationController
   end
 
   def myself 
-    tasks  = current_user.tasks.incomplete(params[:keyword]).includes(:user) 
+    tasks = current_user.tasks.incomplete(params[:status]).order_by_keyword(params[:keyword]).includes(:user)
     @tasks = tasks.page(params[:page]).per(16)
   end
 
@@ -69,5 +66,11 @@ class TasksController < ApplicationController
 
     def set_mytask
       @task = current_user.tasks.find(params[:id])
+    end
+
+    def set_params_status
+      unless params[:status] 
+        params[:status] = ["未対応","対応中"]
+      end 
     end
 end

@@ -1,16 +1,1 @@
 <%= paginate @tasks %>
-
-<div class="dropdown">
-	<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-		<%= @per_page || "25" %>
-		<span class="caret"></span>
-	</button>
-	<ul class="dropdown-menu" role="menu">
-		<li role="presentation"><%= link_to "10件", tasks_path(per_page: 10) %></li>
-		<li role="presentation"><%= link_to "15件", tasks_path(per_page: 15) %></li>
-		<li role="presentation"><%= link_to "20件", tasks_path(per_page: 20) %></li>
-		<li role="presentation"><%= link_to "25件", tasks_path(per_page: 25) %></li>
-		<li role="presentation"><%= link_to "50件", tasks_path(per_page: 50) %></li>
-  </ul>
-  <label>件ずつ表示する</label>
-</div></br>

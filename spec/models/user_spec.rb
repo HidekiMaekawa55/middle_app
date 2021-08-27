@@ -6,27 +6,28 @@ RSpec.describe User, type: :model do
   end
 
   describe 'validation' do
+    subject { user }
     context 'presence: true' do
-      it 'is invalid with a blank email' do
-        user = build(:user, email: ' ')
-        expect(user).to be_invalid
+      context 'email' do
+        let(:user) { build(:user, email: ' ') }
+        it { is_expected.to be_invalid }
       end
-      it 'is invalid with a blank password' do
-        user = build(:user, password: ' ' * 6)
-        expect(user).to be_invalid
+      context 'password' do
+        let(:user) { build(:user, password: ' ' * 6) }
+        it { is_expected.to be_invalid }
       end
     end
     context 'uniquness: true' do
-      let!(:user) { create(:user, email: 'original@example.com')}
-      it 'is invalid with a duplicate email' do
-        user = build(:user, email: 'original@example.com')
-        expect(user).to be_invalid
+      let!(:first_user) { create(:user, email: 'original@example.com')}
+      context 'email' do
+        let(:user) { build(:user, email: 'original@example.com') }
+        it { is_expected.to be_invalid }
       end
     end
     context 'length: { minimum: 6 }' do
-      it 'is invalid with a 5 words password' do
-        user = build(:user, password: "a" * 5, password_confirmation: "a" * 5)
-        expect(user).to be_invalid
+      context 'password' do
+        let(:user) { build(:user, password: "a" * 5, password_confirmation: "a" * 5) }
+        it { is_expected.to be_invalid }
       end
     end
   end 
